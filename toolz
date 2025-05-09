@@ -7,6 +7,22 @@ RESET="\033[0m"
 #Main toolz program
 function toolz() {
 	getUserInput
+
+	#Checking user input
+	case "$userInput" in
+	-f)
+	findHelper ;;
+	-s)
+	echo "func 2" ;;
+	-p)
+	echo "func 3" ;;
+	-u)
+	echo "func 4" ;;
+	-h)
+	echo "func 5" ;;
+	*)
+	echo "Invalid option.. Exiting" ;;
+	esac
 }
 
 
@@ -16,12 +32,52 @@ function toolz() {
 
 #getting user input
 function getUserInput() {
-	printf "%s\n" "Please choose an option:"
 	printf "%b\n" "-f)${GREEN} Find Helper${RESET}"
 	printf "%b\n" "-s)${GREEN} System Information${RESET}"
 	printf "%b\n" "-p)${GREEN} Process Management${RESET}"
 	printf "%b\n" "-u)${GREEN} User Management${RESET}"
 	printf "%b\n" "-h${GREEN} Help${RESET}"
+	read -p "Choose an option: " userInput
 }
 
 
+#Find helper function
+function findHelper() {
+	read -p "Path: " userFindPath
+	#checks if path exists
+	if [[ -e $userFindPath ]]; then
+		printf "%b\n" "-n)${GREEN} Name${RESET}"
+		printf "%b\n" "-f)${GREEN} File${RESET}"
+		printf "%b\n" "-d)${GREEN} Directory${RESET}"
+		printf "%b\n" "-s)${GREEN} Size${RESET}"
+		read -p "Choose an option: " userFindOpt 
+
+		
+		case "$userFindOpt" in
+		-n)
+		read -p "Name of file/dir: " userOptName
+		eval "find $userFindPath -name $userOptName" 
+		;;
+		-f)
+		read -p "Name of file: " userFileName
+		eval "find $userFindPath -type f -name $userFileName" 
+		;;
+		-d)
+		read -p "Name of dir: " userDirName
+		eval "find $userFindPath -type d -name $userDirName" 
+		;;
+		-s)
+		echo "[Number][+=larger then, -=smaller then, c=bytes, k=KB, M=MB, G=GB] ex: +1000k"
+		read -p "Size of file/dir: " userFileSize
+		eval "find $userFindPath -size $userFileSize" 
+		;;
+		*)
+		echo "Invalid option.. Exiting" ;;
+		esac
+		
+	#if user's path doesnt exists
+	else
+		printf "Did not found path %s\n" $userFindPath
+	fi
+
+}
