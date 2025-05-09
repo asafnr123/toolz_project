@@ -1,0 +1,27 @@
+#!/bin/bash
+
+GREEN="\033[32m"
+YELLOW="\033[33m"
+RESET="\033[0m"
+
+#Main toolz program
+function toolz() {
+	getUserInput
+}
+
+
+
+
+
+
+#getting user input
+function getUserInput() {
+	printf "%s\n" "Please choose an option:"
+	printf "%b\n" "-f)${GREEN} Find Helper${RESET}"
+	printf "%b\n" "-s)${GREEN} System Information${RESET}"
+	printf "%b\n" "-p)${GREEN} Process Management${RESET}"
+	printf "%b\n" "-u)${GREEN} User Management${RESET}"
+	printf "%b\n" "-h${GREEN} Help${RESET}"
+}
+
+
