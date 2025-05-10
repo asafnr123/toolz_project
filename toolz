@@ -13,7 +13,7 @@ function toolz() {
 	-f)
 	findHelper ;;
 	-s)
-	echo "func 2" ;;
+	systemInfo ;;
 	-p)
 	echo "func 3" ;;
 	-u)
@@ -81,3 +81,31 @@ function findHelper() {
 	fi
 
 }
+
+
+#System information function
+
+function systemInfo() {
+	printf "%b\n" "-i) ${GREEN} Device Information${RESET}"
+	printf "%b\n" "-d) ${GREEN} Disk Information${RESET}"
+	printf "%b\n" "-m) ${GREEN} Memory Information${RESET}"
+	printf "%b\n" "-p) ${GREEN} Running Processes${RESET}"
+	read -p "Choose an option: " userSysOpt
+	
+	#checking $user input
+	case $userSysOpt in
+	-i) 
+	#Getting device name
+	printf "%b" "Device Name: ${GREEN}$HOSTNAME${RESET}\n" 
+	#Getting storage size
+	df -h | awk -v GREEN="$GREEN" -v RESET="$RESET" '/\/dev\/sda/ {printf "Storage: %s%s%s\n", GREEN, $2, RESET}'
+	#Getting device RAM
+        free --mega | awk -v GREEN="$GREEN" -v RESET="$RESET" '/^Mem:/ {printf "RAM: %s%dMB%s\n", GREEN, $2, RESET}'
+	#Getting device CPU
+	awk -v GREEN="$GREEN" -v RESET="$RESET" -F': ' '/model name/ {printf "CPU: %s%s%s\n", GREEN, $2, RESET; exit}' /proc/cpuinfo
+	#Getting OS and architecture
+	cat /etc/os-release | awk -F'=' '/PRETTY_NAME/ {print $2}' | awk -v GREEN="$GREEN" -v RESET="$RESET" -F'"' '{printf "OS: %s%s %s", GREEN, $2, RESET}'; printf "%b\n" "${GREEN}$(uname -m)${RESET}" 
+	;;
+	esac
+}
+
