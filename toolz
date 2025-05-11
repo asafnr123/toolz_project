@@ -15,7 +15,7 @@ function toolz() {
 	-s)
 	systemInfo ;;
 	-p)
-	echo "func 3" ;;
+	processManage ;;
 	-u)
 	echo "func 4" ;;
 	-h)
@@ -94,7 +94,7 @@ function systemInfo() {
 	
 	#checking $user input
 	case $userSysOpt in
-	-i) 
+	-i) #Device information 
 	#Getting device name
 	printf "%b" "Device Name: ${GREEN}$HOSTNAME${RESET}\n" 
 	#Getting storage size
@@ -104,8 +104,53 @@ function systemInfo() {
 	#Getting device CPU
 	awk -v GREEN="$GREEN" -v RESET="$RESET" -F': ' '/model name/ {printf "CPU: %s%s%s\n", GREEN, $2, RESET; exit}' /proc/cpuinfo
 	#Getting OS and architecture
-	cat /etc/os-release | awk -F'=' '/PRETTY_NAME/ {print $2}' | awk -v GREEN="$GREEN" -v RESET="$RESET" -F'"' '{printf "OS: %s%s %s", GREEN, $2, RESET}'; printf "%b\n" "${GREEN}$(uname -m)${RESET}" 
+	cat /etc/os-release | awk -F'=' '/PRETTY_NAME/ {print $2}' | awk -v GREEN="$GREEN" -v RESET="$RESET" -F'"' '{printf "OS: %s%s%s", GREEN, $2, RESET}'; printf "%b\n" "${GREEN}$(uname -m)${RESET}" 
+	;;
+	-d) #Disk information
+ 	df -h | awk -v GREEN="$GREEN" -v RESET="$RESET" '/\/dev\/sda/ {printf "Size Used Avail\n%s%s %s %s%s", GREEN, $2, $3, $4, RESET}' | column -t 
+;;
+	-m) #Memory Information
+	free --mega | awk -v GREEN="$GREEN" -v RESET="$RESET" '/Mem:/ {printf "Total Used Free\n%s%sM %sM %sM%s", GREEN, $2, $3, $3, RESET}' | column -t 
+	;;
+	-p) $Running Processes
+	top 
+	;;
+	*)
+	echo "Invalid option.. Exiting" ;;
+	esac
+}
+
+
+#Process management function
+function processManage() {
+	printf "%b\n" "-r) ${GREEN}Running Processes${RESET}"
+	printf "%b\n" "-s) ${GREEN}Sorted Processes{RESET}"
+	printf "%b\n" "-k) ${GREEN}Stop Process{RESET}"
+	read -p "Choose an option: " userProcessOpt
+
+	case $userProcessOpt in
+	-r) #Running processes 
+	top
+	;;
+	-s) #Sory Processes by CPU RAM or Runtime 
+	printf "Sort Processes by:\n"
+	printf "%b\n" "-c) ${GREEN}CPU${RESET}"
+	printf "%b\n" "-m) ${GREEN}RAM${RESET}"
+	printf "%b\n" "-r) ${GREEN}Runtime${RESET}"
+	read -p "Choose an option: " userSortOpt
+
+	case $userSortOpt in
+	-c) #Sorted processes by CPU
+	ps aux --sort=+%cpu ;;
+	-m) #Sorted Processes by RAM
+	ps aux --sort=+%mem ;;
+	-r) #Sorted Processes by Runtime
+	ps aux --sort-etime ;;
+	esac
 	;;
 	esac
+
+
+
 }
 
