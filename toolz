@@ -84,7 +84,6 @@ function findHelper() {
 
 
 #System information function
-
 function systemInfo() {
 	printf "%b\n" "-i) ${GREEN} Device Information${RESET}"
 	printf "%b\n" "-d) ${GREEN} Disk Information${RESET}"
@@ -124,8 +123,9 @@ function systemInfo() {
 #Process management function
 function processManage() {
 	printf "%b\n" "-r) ${GREEN}Running Processes${RESET}"
-	printf "%b\n" "-s) ${GREEN}Sorted Processes{RESET}"
-	printf "%b\n" "-k) ${GREEN}Stop Process{RESET}"
+	printf "%b\n" "-s) ${GREEN}Sorted Processes${RESET}"
+	printf "%b\n" "-g) ${GREEN}Get Processes${RESET}"
+	printf "%b\n" "-k) ${GREEN}Stop Process${RESET}"
 	read -p "Choose an option: " userProcessOpt
 
 	case $userProcessOpt in
@@ -145,10 +145,89 @@ function processManage() {
 	-m) #Sorted Processes by RAM
 	ps aux --sort=+%mem ;;
 	-r) #Sorted Processes by Runtime
-	ps aux --sort-etime ;;
-	esac
+	ps aux --sort=etime ;;
+	esac ;;
+	-g) #Getting process by id or name
+	printf "%b\n" "-i) ${GREEN}PID${RESET}"
+	printf "%b\n" "-n) ${GREEN}Process Name${RESET}"
+	read -p "Choose an option: " userGetProcOpt
+
+	case $userGetProcOpt in
+	-i) #Getting process by id
+	read -p "PID: " userPidOpt 
+	ps -p $userPidOpt &> /dev/null
+	if [[ $? == 0 ]]; then
+		ps -p $userPidOpt -o comm=
+	else
+		printf "Process with %s PID was not found\n" "$userPidOpt"
+	fi
 	;;
-	esac
+	-n) #Getting process by name
+	read -p "Process Name: " userProcNameOpt
+	pgrep -x $userProcNameOpt &> /dev/null 
+	if [[ $? == 0 ]]; then
+		ps aux | grep $userProcNameOpt
+	else
+		printf "Process %s was not found\n" "$userProcNameOpt"
+	fi 
+		
+	esac ;;
+	
+	-k) #killing process by name or pid
+	printf "%b\n" "-i)${GREEN} PID${RESET}"
+	printf "%b\n" "-n)${GREEN} Process Name${RESET}"
+	read -p "Choose an option: " userKillProcOpt
+
+	case $userKillProcOpt in
+
+	-i)
+	read -p "PID: " userPidOpt
+	if kill -0 $userPidOpt &> /dev/null; then
+		while true; do
+			read -p "Are you sure you went to kill this process? (y/n) " userPidChoice 	
+			case $userPidChoice in
+			y|Y) #killing process
+			kill -9 $userPidOpt
+			break ;;
+			n|N) 
+			echo "Exiting.." 
+			break ;;
+			esac
+		done 
+	else
+		printf "Process with id %s was not found\n" $userPidOpt	
+	fi
+	;;	
+	-n) #killing process by name
+	read -p "Process Name: " userPnameOpt
+	pgrep $userPnameOpt &> /dev/null
+	if [[ $? == 0 ]]; then
+		while true; do
+			read -p "Are you sure you want to kill this process? (y/n) " userPnameChoice
+
+		        case $userPnameChoice in
+	          	y|Y) #killing process by name
+	        	pkill -9 $userPnameOpt
+			break ;;
+	        	n|N) 
+			echo "Exiting.."
+			break ;;
+			esac
+		done
+
+	else
+		printf "Process %s was not found\n" $userPnameOpt	
+	fi
+	;;
+	*)
+	echo "Invalid option.. Exiting" ;;
+
+	esac 
+
+
+
+	esac #first esac
+
 
 
 
