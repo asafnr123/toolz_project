@@ -17,7 +17,7 @@ function toolz() {
 	-p)
 	processManage ;;
 	-u)
-	echo "func 4" ;;
+	userManage ;;
 	-h)
 	echo "func 5" ;;
 	*)
@@ -233,3 +233,22 @@ function processManage() {
 
 }
 
+
+
+
+# User management function
+function userManage() {
+
+	printf "%b\n" "-u) ${GREEN}Manage Users${RESET}"
+	printf "%b\n" "-a) ${GREEN}Administrators${RESET}"
+	printf "%b\n" "-p) ${GREEN}Change Password${RESET}"
+
+
+
+
+
+
+
+
+
+}
