@@ -273,6 +273,8 @@ function userManage() {
 
 			done
 			;;
+			*)
+			echo "Invalid option.. Exiting" ;;
 
 		esac
 
