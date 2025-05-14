@@ -239,9 +239,44 @@ function processManage() {
 # User management function
 function userManage() {
 
-	printf "%b\n" "-u) ${GREEN}Manage Users${RESET}"
+	printf "%b\n" "-u) ${GREEN}Users${RESET}"
 	printf "%b\n" "-a) ${GREEN}Administrators${RESET}"
-	printf "%b\n" "-p) ${GREEN}Change Password${RESET}"
+	printf "%b\n" "-g) ${GREEN}Groups${RESET}"
+	read -p "Choose an option: " userManageOpt
+
+	case "$userManageOpt" in
+		-u)
+		printf "%b\n" "-c) ${GREEN}Create a user${RESET}"	
+		printf "%b\n" "-f) ${GREEN}Find a user${RESET}"	
+		printf "%b\n" "-u) ${GREEN}Update password${RESET}"	
+		printf "%b\n" "-r) ${GREEN}Remove user${RESET}"	
+		
+		read -p "Choose an option" userManagementOpt
+
+		case "$userManagementOpt" in
+			-c)
+			read -p "Username: " newUsername
+			# Check if passowrd contains at least 2 letters and numbers
+			while true; do	
+			read -p "Password: " newUserPassword	
+			if [[ "${#newUserPassword}" -gt 7 ]] && [[ ${newUserPassword} =~ [a-zA-Z].*[a-zA-Z] ]] && [[ ${newUserPassword} =~ [0-9] ]]; then
+				printf "%b\n" "${newUsername} was ${GREEN}successfully${RESET} created" 
+				break;
+			else
+				printf "Password needs to be at least 8 length and with at least 2 letters and numbers\n"
+
+
+			fi
+				
+
+
+
+			done
+			;;
+
+		esac
+
+	esac
 
 
 
