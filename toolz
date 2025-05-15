@@ -35,8 +35,8 @@ function getUserInput() {
 	printf "%b\n" "-f)${GREEN} Find Helper${RESET}"
 	printf "%b\n" "-s)${GREEN} System Information${RESET}"
 	printf "%b\n" "-p)${GREEN} Process Management${RESET}"
-	printf "%b\n" "-u)${GREEN} User Management${RESET}"
-	printf "%b\n" "-h${GREEN} Help${RESET}"
+	printf "%b\n" "-u)${GREEN} User & Groups Management${RESET}"
+	printf "%b\n" "-h)${GREEN} Help${RESET}"
 	read -p "Choose an option: " userInput
 }
 
@@ -251,19 +251,22 @@ function userManage() {
 		printf "%b\n" "-u) ${GREEN}Update password${RESET}"	
 		printf "%b\n" "-r) ${GREEN}Remove user${RESET}"	
 		
-		read -p "Choose an option" userManagementOpt
+		read -p "Choose an option: " userManagementOpt
 
 		case "$userManagementOpt" in
 			-c)
 			read -p "Username: " newUsername
 			# Check if passowrd contains at least 2 letters and numbers
 			while true; do	
-			read -p "Password: " newUserPassword	
-			if [[ "${#newUserPassword}" -gt 7 ]] && [[ ${newUserPassword} =~ [a-zA-Z].*[a-zA-Z] ]] && [[ ${newUserPassword} =~ [0-9] ]]; then
+			read -s -p "Password: " newUserPassword	
+			if [[ "${#newUserPassword}" -gt 7 ]] && [[ ${newUserPassword} =~ ([a-zA-Z].*){2,} ]] && [[ ${newUserPassword} =~ ([0-9].*){2,} ]]; then
+				sudo useradd -m ${newUsername}
+				sudo passwd ${newUserPassword}
 				printf "%b\n" "${newUsername} was ${GREEN}successfully${RESET} created" 
 				break;
 			else
-				printf "Password needs to be at least 8 length and with at least 2 letters and numbers\n"
+				printf "Password must be at least 8 characters long and include at least 2 letters
+and 2 numbers\n"
 
 
 			fi
