@@ -3,6 +3,7 @@
 GREEN="\033[32m"
 RESET="\033[0m"
 
+
 #Main toolz program
 function toolz() {
 	getUserInput
@@ -331,6 +332,7 @@ and 2 numbers\n"
 			#getting last login time
 			userLastLogin=$(last -F $findUser | head -n 1 | awk -v GREEN="$GREEN" -v RESET="$RESET" ' {printf "%s%s-%s-%s-%s-%s%s", GREEN, $4, $5, $6, $7, $8, RESET}')
 
+
 			#printing all the values
 			printf "%b\n" "Username: ${GREEN}${findUser}${RESET}"
 			printf "%b\n" "UID: ${GREEN}${userId}${RESET}"
@@ -376,19 +378,38 @@ and 2 numbers\n"
 				fi
 			done
 			;;
-			*)
-			echo "Invalid option.. Exiting" ;;
+
+			-r) #remove user
+			read -p "Username: " removeUser
+
+			#check if user exists
+			if ! id $removeUser &> /dev/null; then
+				printf "${removeUser} was not found.. Exiting\n"
+				exit 1	
+	
+			fi
+			#if user exist ask if sure
+			while true; do
+			read -p "Are you sure you want to remove ${removeUser}? (y/n) " userRemoveChoice
+
+			case "$userRemoveChoice" in
+			[yY])
+			sudo userdel -r $removeUser 
+			printf "${removeUser} was ${GREEN}successfully${RESET} deleted\n"
+			break ;;
+			[nN])
+			echo "canceling.."
+			break ;;
+			esac
+			done 
+			;;
 
 		esac
 
 	esac
 
 
-
-
-
-
-
-
-
 }
+
+
+toolz
