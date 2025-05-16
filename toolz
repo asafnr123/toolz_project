@@ -254,21 +254,31 @@ function userManage() {
 
 		case "$userManagementOpt" in
 			-c)
-			read -p "Username: " newUsername
-			sudo useradd -m ${newUsername}
+			read -p "Username: " newUsername; 
 			# Check if passowrd length is at leat 8 and contains at least 2 letters and numbers
 		if [[ $? == 0 ]]; then
 			while true; do	
-			read -s -p "Password: " newUserPassword	
+			read -s -p "Password: " newUserPassword; echo	
 
 			if [[ "${#newUserPassword}" -gt 7 ]] && [[ ${newUserPassword} =~ ([a-zA-Z].*){2,} ]] && [[ ${newUserPassword} =~ ([0-9].*){2,} ]]; then
-				echo "$newUsername:$newUserPassword" |sudo chpasswd
-				if [[ $? == 0 ]]; then	
-					printf "%b\n" "${newUsername} was ${GREEN}successfully${RESET} created" 
-					break;
+
+				#check if passwords match
+				read -s -p "Re-enter password: " newUserVerifyPassword; echo
+				if [[ ${newUserPassword} == ${newUserVerifyPassword} ]]; then
+
+					sudo useradd -m ${newUsername} &> /dev/null
+					echo "$newUsername:$newUserPassword" |sudo chpasswd
+					if [[ $? == 0 ]]; then	
+						printf "%b\n" "${newUsername} was ${GREEN}successfully${RESET} created" 
+						break;
+					else
+						echo "Something went wrong"
+						break;
+					fi
 				else
-					echo "Something went wrong"
-					break;
+					echo "Passwords don't match.. Exiting"
+					sleep 2
+					exit 1
 				fi
 			else
 				printf "\nPassword must be at least 8 characters long and include at least 2 letters
@@ -285,13 +295,13 @@ and 2 numbers\n"
 			#checks if user put an input
 			if [[ -z $findUser ]]; then
 				echo "Invalid option.. Exiting"
-				sleep 1
+				sleep 2
 				exit 1
 			fi
 			#checks if user exists	
 			if ! id $findUser &> /dev/null; then
 				echo "User does not exist"
-				sleep 1
+				sleep 2
 				exit 2
 			fi
 			
@@ -329,6 +339,43 @@ and 2 numbers\n"
 			printf "%b\n" "Last Login: ${GREEN}${userLastLogin}${RESET}"
 			;;		
 				
+			-u) #update existing user password
+			read -p "Username: " userUpdPass
+			
+			#check if user exist
+			if ! id "$userUpdPass" &> /dev/null; then
+				echo "User ${userUpdPass} does not exist"
+				sleep 2
+				exit 1 
+			fi
+			
+			while true; do
+				read -s -p "New Password: " userNewPassword; echo
+				if [[ ${#userNewPassword} -gt 7 ]] && [[ ${userNewPassword} =~ ([a-zA-Z].*){2,} ]] && [[ ${userNewPassword} =~ ([0-9].*){2,} ]]; then
+					read -s -p "Re-enter password: " verifyNewPassword; echo 
+					if [[ ${userNewPassword} == ${verifyNewPassword} ]]; then
+
+						echo "${userUpdPass}:${userNewPassword}" | sudo chpasswd  &> /dev/null
+						if [[ $? -eq 0 ]]; then
+
+							printf "%b\n" "Password has been ${GREEN}successfully${RESET} changed"
+							break;
+						
+						else
+							printf "Something went wrong\n"
+							sleep 2
+							exit 	
+						fi
+					else
+						echo "Passwords don't match.. Exiting"
+						sleep 2
+						exit
+					fi
+				else
+				printf "Password must be at least 8 characters long and include at least 2 letters\n"
+				fi
+			done
+			;;
 			*)
 			echo "Invalid option.. Exiting" ;;
 
