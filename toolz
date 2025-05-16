@@ -282,11 +282,51 @@ and 2 numbers\n"
 			;;
 			-f)
 			read -p "Username: " findUser
-
-			if [[ -z $finduser ]]; then
+			#checks if user put an input
+			if [[ -z $findUser ]]; then
 				echo "Invalid option.. Exiting"
+				sleep 1
 				exit 1
 			fi
+			#checks if user exists	
+			if ! id $findUser &> /dev/null; then
+				echo "User does not exist"
+				sleep 1
+				exit 2
+			fi
+			
+			#getting user id
+			userId=$(id -u $findUser)
+
+			#getting user groups
+			userGroups=$(id -Gn $findUser | sed 's/ / : /g')
+
+			#getting account creation date
+			shadowUser=$(sudo grep "^$findUser:" /etc/shadow)	
+			if [[ -n $shadowUser ]]; then
+				dateInDays=$(echo "$shadowUser" | cut -d: -f3)
+	
+				if [[ -n $dateInDays ]]; then
+					creationDate=$(date -d "1970-01-01 +$dateInDays days" "+%d-%m-%Y")
+				else
+					creationDate="N/A"	
+
+				fi
+			else
+				creationDate="N/A"
+
+			fi
+
+
+			#getting last login time
+			userLastLogin=$(last -F $findUser | head -n 1 | awk -v GREEN="$GREEN" -v RESET="$RESET" ' {printf "%s%s-%s-%s-%s-%s%s", GREEN, $4, $5, $6, $7, $8, RESET}')
+
+			#printing all the values
+			printf "%b\n" "Username: ${GREEN}${findUser}${RESET}"
+			printf "%b\n" "UID: ${GREEN}${userId}${RESET}"
+			printf "%b\n" "Groups: ${GREEN}${userGroups}${RESET}"
+			printf "%b\n" "Created: ${GREEN}${creationDate}${RESET}"
+			printf "%b\n" "Last Login: ${GREEN}${userLastLogin}${RESET}"
 			;;		
 				
 			*)
