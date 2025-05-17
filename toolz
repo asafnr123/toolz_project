@@ -248,7 +248,7 @@ function userManage() {
 	read -p "Choose an option: " userManageOpt
 
 	case "$userManageOpt" in
-		-u)
+		-u) # User management
 		printf "%b\n" "-a) ${GREEN}All users${RESET}"	
 		printf "%b\n" "-c) ${GREEN}Create a user${RESET}"	
 		printf "%b\n" "-f) ${GREEN}Find a user${RESET}"	
@@ -468,13 +468,19 @@ and 2 numbers\n"
 	fi	
 	;;
 
-	#check if user in sudo group
 	*)
 	echo "Invalid option.. Exiting"
 	exit ;;
 	esac ;;
 
 
+	-g) # Group management
+	printf "%b\n" "-a) ${GREEN}All groups${RESET}"
+	printf "%b\n" "-f) ${GREEN}Find group${RESET}"
+	printf "%b\n" "-c) ${GREEN}Create group${RESET}"
+	printf "%b\n" "-r) ${GREEN}Remove group${RESET}"
+	read -p "Choose an option: " userGroupOpt
+	;;
 	*)
 	echo "Invalid option.. Exiting"
 	exit ;;
