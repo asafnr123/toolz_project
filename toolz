@@ -72,7 +72,8 @@ function findHelper() {
 		eval "find $userFindPath -size $userFileSize" 
 		;;
 		*)
-		echo "Invalid option.. Exiting" ;;
+		echo "Invalid option.. Exiting" 
+		exit ;;
 		esac
 		
 	#if user's path doesnt exists
@@ -115,7 +116,8 @@ function systemInfo() {
 	top 
 	;;
 	*)
-	echo "Invalid option.. Exiting" ;;
+	echo "Invalid option.. Exiting" 
+	exit ;;
 	esac
 }
 
@@ -220,7 +222,8 @@ function processManage() {
 	fi
 	;;
 	*)
-	echo "Invalid option.. Exiting" ;;
+	echo "Invalid option.. Exiting" 
+	exit ;;
 
 	esac 
 
@@ -245,6 +248,9 @@ function userManage() {
 	read -p "Choose an option: " userManageOpt
 
 	case "$userManageOpt" in
+		*)
+		echo "Invalid option.. Exiting"
+		exit ;;
 		-u)
 		printf "%b\n" "-c) ${GREEN}Create a user${RESET}"	
 		printf "%b\n" "-f) ${GREEN}Find a user${RESET}"	
@@ -278,7 +284,6 @@ function userManage() {
 					fi
 				else
 					echo "Passwords don't match.. Exiting"
-					sleep 2
 					exit 1
 				fi
 			else
@@ -296,13 +301,11 @@ and 2 numbers\n"
 			#checks if user put an input
 			if [[ -z $findUser ]]; then
 				echo "Invalid option.. Exiting"
-				sleep 2
 				exit 1
 			fi
 			#checks if user exists	
 			if ! id $findUser &> /dev/null; then
 				echo "User does not exist"
-				sleep 2
 				exit 2
 			fi
 			
@@ -347,7 +350,6 @@ and 2 numbers\n"
 			#check if user exist
 			if ! id "$userUpdPass" &> /dev/null; then
 				echo "User ${userUpdPass} does not exist"
-				sleep 2
 				exit 1 
 			fi
 			
@@ -365,12 +367,10 @@ and 2 numbers\n"
 						
 						else
 							printf "Something went wrong\n"
-							sleep 2
 							exit 	
 						fi
 					else
 						echo "Passwords don't match.. Exiting"
-						sleep 2
 						exit
 					fi
 				else
@@ -406,7 +406,7 @@ and 2 numbers\n"
 
 		esac
 
-	esac
+	esac #user management main case
 
 
 }
