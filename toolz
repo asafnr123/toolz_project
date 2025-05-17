@@ -248,10 +248,8 @@ function userManage() {
 	read -p "Choose an option: " userManageOpt
 
 	case "$userManageOpt" in
-		*)
-		echo "Invalid option.. Exiting"
-		exit ;;
 		-u)
+		printf "%b\n" "-a) ${GREEN}All users${RESET}"	
 		printf "%b\n" "-c) ${GREEN}Create a user${RESET}"	
 		printf "%b\n" "-f) ${GREEN}Find a user${RESET}"	
 		printf "%b\n" "-u) ${GREEN}Update password${RESET}"	
@@ -260,7 +258,11 @@ function userManage() {
 		read -p "Choose an option: " userManagementOpt
 
 		case "$userManagementOpt" in
-			-c)
+			-a) #getting all users
+			printf "All Users:\n"
+			cat /etc/passwd | awk -v GREEN="${GREEN}" -v RESET="${RESET}" -F':' '/\/home\/*/ {printf "%s%s%s\n", GREEN, $1, RESET}'
+			;;
+			-c) #creating a user
 			read -p "Username: " newUsername; 
 			# Check if passowrd length is at leat 8 and contains at least 2 letters and numbers
 		if [[ $? == 0 ]]; then
@@ -270,10 +272,10 @@ function userManage() {
 			if [[ "${#newUserPassword}" -gt 7 ]] && [[ ${newUserPassword} =~ ([a-zA-Z].*){2,} ]] && [[ ${newUserPassword} =~ ([0-9].*){2,} ]]; then
 
 				#check if passwords match
-				read -s -p "Re-enter password: " newUserVerifyPassword; echo
+				read -s -p "Re-enter password: " newUserVerifyPassword; echo 
 				if [[ ${newUserPassword} == ${newUserVerifyPassword} ]]; then
 
-					sudo useradd -m ${newUsername} &> /dev/null
+					sudo useradd -m -s /bin/bash ${newUsername} &> /dev/null
 					echo "$newUsername:$newUserPassword" |sudo chpasswd
 					if [[ $? == 0 ]]; then	
 						printf "%b\n" "${newUsername} was ${GREEN}successfully${RESET} created" 
@@ -283,11 +285,11 @@ function userManage() {
 						break;
 					fi
 				else
-					echo "Passwords don't match.. Exiting"
+					printf "Passwords don't match.. Exiting\n"
 					exit 1
 				fi
 			else
-				printf "\nPassword must be at least 8 characters long and include at least 2 letters
+				printf "Password must be at least 8 characters long and include at least 2 letters
 and 2 numbers\n"
 
 
@@ -296,7 +298,7 @@ and 2 numbers\n"
 			done
 		fi
 			;;
-			-f)
+			-f) #find a specific user and give his info
 			read -p "Username: " findUser
 			#checks if user put an input
 			if [[ -z $findUser ]]; then
@@ -404,12 +406,82 @@ and 2 numbers\n"
 			done 
 			;;
 
-		esac
+		esac ;;
+	-a) #Administrators management
 
+	printf "%b\n" "-a) ${GREEN}All administrators${RESET}"
+	printf "%b\n" "-s) ${GREEN}Set administrators${RESET}"
+	printf "%b\n" "-r) ${GREEN}Remove administrators${RESET}"
+
+	read -p "Choose an option: " userAdminOpt
+
+	case $userAdminOpt in
+
+	-a) #Get all the admins (users in sudo group)
+	printf "All Administrators:\n"
+	getent group sudo | awk -F':' -v G="${GREEN}" -v R="${RESET}" ' {printf "%s%s%s\n", G, $4, R}' | tr ',' '\n'
+	;;
+	-s) # Set a user as admin
+	read -p "Username: " setUserAdmin
+	if ! id $setUserAdmin &> /dev/null; then
+		printf "Didn't found user %s\n" $setUserAdmin	
+		exit 1
+	fi 	
+
+	# Check if user already in sudo group
+	if getent group sudo | grep ${setUserAdmin} &> /dev/null; then
+		printf "${setUserAdmin} is ${GREEN}already${RESET} an administrator\n"
+		exit 0
+	fi
+
+	sudo usermod -aG sudo $setUserAdmin &> /dev/null
+	if [[ $? -eq 0 ]]; then
+		printf "%b\n" "Added ${setUserAdmin} to the ${GREEN}sudo group${RESET}"
+		exit 1
+	else
+		printf "Something went wrong\n"
+		exit 2
+
+	fi
+	;;
+	
+	-r) #Remove a user from sudo group
+	read -p "Username: " removeUserAdmin	
+
+	#check if user exist
+	if ! id $removeUserAdmin &> /dev/null; then
+		printf "Didn't found user ${removeUserAdmin}\n"
+		exit 1
+	fi
+
+	#check if user is an admin
+	if ! getent group sudo | grep $removeUserAdmin &> /dev/null; then
+		printf "${removeUserAdmin} is ${GREEN}already${RESET} not an administrator\n"
+		exit 0
+	fi
+
+	# if user exist and is not an admin
+	sudo gpasswd --delete $removeUserAdmin sudo &> /dev/null
+	if [[ $? -eq 0 ]]; then
+		printf "Removed ${removeUserAdmin} ${GREEN}successfully${RESET} from the sudo group\n"
+	exit 0
+	fi	
+	;;
+
+	#check if user in sudo group
+	*)
+	echo "Invalid option.. Exiting"
+	exit ;;
+	esac ;;
+
+
+	*)
+	echo "Invalid option.. Exiting"
+	exit ;;
 	esac #user management main case
 
 
 }
 
 
-toolz
+toolz #invoking the script 
