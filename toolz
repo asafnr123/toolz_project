@@ -480,6 +480,14 @@ and 2 numbers\n"
 	printf "%b\n" "-c) ${GREEN}Create group${RESET}"
 	printf "%b\n" "-r) ${GREEN}Remove group${RESET}"
 	read -p "Choose an option: " userGroupOpt
+
+	case $userGroupOpt in
+	-a) #Getting all groups
+	getent group | awk -F':' -v G="${GREEN}" -v R="${RESET}" '{printf "Group: %s%s%s\nGID: %s%s%s\nMembers: %s%s%s\n\n", G, $1, R, G, $3, R, G, $4, R}' 
+	;;
+
+
+	esac
 	;;
 	*)
 	echo "Invalid option.. Exiting"
