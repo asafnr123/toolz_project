@@ -483,7 +483,19 @@ and 2 numbers\n"
 
 	case $userGroupOpt in
 	-a) #Getting all groups
-	getent group | awk -F':' -v G="${GREEN}" -v R="${RESET}" '{printf "Group: %s%s%s\nGID: %s%s%s\nMembers: %s%s%s\n\n", G, $1, R, G, $3, R, G, $4, R}' 
+	getent group | awk -F':' -v G="${GREEN}" -v R="${RESET}" '{members = ($4 == "") ? "N/A" : $4; printf "Group: %s%s%s\nGID: %s%s%s\nMembers: %s%s%s\n\n", G, $1, R, G, $3, R, G, members, R}' 
+	;;
+
+	-f) # Find specific group
+	while true; do
+		read -p "Group: " userFindGroup
+
+		if grep -q $userFindGroup /etc/group; then
+			getent group | awk '/^"${userFindGroup}":*/' | awk -F':' -v G="${GREEN}" -v R="${RESET}" '{ members = ($4 == "") ? "N/A" : $4; printf "Group: %s%s%s\nGID: %s%s%s\nMembers: %s%s%s\n", G, $1, R, G, $3, R, G, members, R}' 	
+			break; 
+		fi	
+
+	done	
 	;;
 
 
