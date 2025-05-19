@@ -491,7 +491,7 @@ and 2 numbers\n"
 		read -p "Group: " userFindGroup
 
 		if grep -q $userFindGroup /etc/group; then
-			getent group | awk '/^"${userFindGroup}":*/' | awk -F':' -v G="${GREEN}" -v R="${RESET}" '{ members = ($4 == "") ? "N/A" : $4; printf "Group: %s%s%s\nGID: %s%s%s\nMembers: %s%s%s\n", G, $1, R, G, $3, R, G, members, R}' 	
+			getent group | awk -v u="$userFindGroup" '$1 ~ "^" u' | awk -F':' -v G="${GREEN}" -v R="${RESET}" '{ members = ($4 == "") ? "N/A" : $4; printf "Group: %s%s%s\nGID: %s%s%s\nMembers: %s%s%s\n", G, $1, R, G, $3, R, G, members, R}' 	
 			break; 
 		fi	
 
