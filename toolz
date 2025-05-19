@@ -56,7 +56,7 @@ function findHelper() {
 		case "$userFindOpt" in
 		-n)
 		read -p "Name of file/dir: " userOptName
-		eval "find $userFindPath -name $userOptName" 
+		find $userFindPath -name $userOptName 
 		;;
 		-f)
 		read -p "Name of file: " userFileName
@@ -498,12 +498,69 @@ and 2 numbers\n"
 	done	
 	;;
 
+	-c) # Creating a new group
+	while true; do
+		read -p "Group name (e - exit): " newGroupName
+		if [[ $newGroupName == "e" ]]; then
+			exit 0
+		fi
+		sudo groupadd ${newGroupName} &> /dev/null
+		groupAddExitStatus=$?
+
+		if [[ ${groupAddExitStatus} -eq 0 ]]; then
+			printf "Group ${newGroupName} was ${GREEN}successfully${RESET} created\n"	
+		break;	
+		elif [[ ${groupAddExitStatus} -eq 9 ]]; then
+			printf "Group ${newGroupName} already exist\n"
+		else
+			printf "Something went wrong\n"
+		fi
+	done	
+	;;
+
+	-r) # Remove a group 
+	while true; do
+		read -p "Group name (e -exit): " removeGroup
+		
+		if [[ ${removeGroup} == "e" ]]; then
+			exit 0 
+		fi
+
+		if grep -w -q ${removeGroup} /etc/group; then
+			read -p "Are you sure? (y/n): " removeGroupChoice
+
+			case ${removeGroupChoice} in
+			[yY])
+			sudo groupdel $removeGroup &> /dev/null
+			if [[ $? -eq 0 ]]; then
+				printf "Group ${removeGroup} was ${GREEN}sucssesfully${RESET} removed\n"
+				exit 0
+			else
+				printf "Something went wrong\n"
+			fi
+			;;
+			[nN])
+			printf "Cancelling.."
+			exit 0 ;;
+			*)
+			printf "Invalid input.. exiting\n"
+			exit 1 ;;	
+			esac
+		else
+			printf "Group ${removeGroup} was not found\n"
+			exit 2 
+		fi 	
+
+	done
+	;;
 
 	esac
 	;;
+
 	*)
 	echo "Invalid option.. Exiting"
 	exit ;;
+
 	esac #user management main case
 
 
