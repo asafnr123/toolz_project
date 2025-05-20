@@ -10,7 +10,7 @@ This all-in-one Bash utility provides helpful features for system administration
 **Before running the script:**
 
 - Make sure your script is executable (chmod +x toolz.sh)
-- Do **not** run the script in your current shell or it may not run well.
+- Do **not** run the script in your current shell for best experience
 - Use one of the following commands to run the script: (bash toolz.sh or just ./toolz.sh)
 
 ---
