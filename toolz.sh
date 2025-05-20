@@ -573,12 +573,51 @@ and 2 numbers\n"
 # Helper function
 function helper() {
 	# Welcome
-	echo "Welcome to the toolz script! This all-in-one Bash utility provides helpful features for system administration, including file search, system information, process management, and user/group management. This guide explains each feature and provides step-by-step usage instructions." 
+	printf "Welcome to ${GREEN}toolz${RESET}! This all-in-one Bash utility provides helpful features for system administration, including file search, system information, process management, and user/group management. This guide explains each feature and provides step-by-step usage instructions.\n\n" 
 	
 
 	# Setting up the script:
-	echo "Make sure you script is executable (chmod +x toolz.sh) 
+	printf "*** ${GREEN}BEFORE RUNNING SCRIPT${RESET} ***\n"
+	echo -e "\t- Make sure you script is executable (chmod +x toolz.sh)" 
+	echo -e "\t- Do not run the script on your current shell or it will not run well"
+	echo -e "\t- Use (bash toolz.sh) or (just ./toolz.sh) to run the script\n"	
 
+	# Main menu functions:
+	printf "*** ${GREEN}MAIN MENU FUNCTIONS${RESET} ***\n"
+	printf "\t*** ${GREEN}Find Helper (-f)${RESET} ***\n"
+
+	echo -e "\t\tSearch for files/directories by name,type or size"
+	echo -e "\t\tEnter the path to search\n\t\tChoose search type:\n\t\t-n: Name (file or directory)\n\t\t-f: File name\n\t\t-d: Directory name\n\t\t-s: Size (e.g +100k for files larter then 100KB)\n" 
+
+
+	printf "\t*** ${GREEN}System Information (-s)${RESET} ***\n"
+	echo -e "\t\tView system hardware and OS details"
+	echo -e "\t\tOptions:\n\t\t-i) Device information (hostname, RAM, CPU, OS)\n\t\t-d) Disk information (disk usage)\n\t\t-m) Memory information (total/used/free)\n\t\t-p) Running processes (shows current processes in real-time)\n"
+
+
+	printf "\t*** ${GREEN}Process Management (-p)${RESET} ***\n"
+	echo -e "\t\tMonitor, sort, find, and kill processes"
+	echo -e "\t\tOptions:\n\t\t-r) Running processes (another place to output the current running processes)\n\t\t-s) Sorted processes:\n\t\t\t-c) by CPU\n\t\t\t-m) by RAM\n\t\t\t-r) by Runtime\n"
+		
+	echo -e "\t\t-g) Get processes:\n\t\t\t-i) by PID\n\t\t\t-n) by Name"
+	echo -e "\t\t-k) Stop process:\n\t\t\t-i) by PID\n\t\t\t-n) by Name\n"
+
+
+	printf "\t*** ${GREEN}User & Group Management (-u)${RESET} ***\n"
+	echo -e "\tManage users, administrators, and groups"
+	echo -e "\t\tOptions:\n\t\t-u) User Management:\n\t\t\t-a) Show all users\n\t\t\t-c) Creates a new user\n\t\t\t-f) Find a specific user\n\t\t\t-u) Update your'e password\n\t\t\t-r) Remove a user\n"
+
+	echo -e "\t\t-a) Administrators Management:\n\t\t\t-a) Show all administrators\n\t\t\t-s) Set a user as admininstrator\n\t\t\t-r) Remove a user from administrators\n"
+	
+	echo -e "\t\t-g) Group Management:\n\t\t\t-a) Show all the groups\n\t\t\t-f) Find a specific group\n\t\t\t-c) Create a new group\n\t\t\t-r) Remove a group\n"
+
+	# Additional notes:
+	printf "*** ${GREEN}ADDITIONAL NOTES${RESET} ***\n"
+	echo -e "\t* Sudo required: Some actions (creting/removing users/groups. changing passwords) require sudo privileges.\n\t* Password rules: When creating/updating a user, passwords must be at least 8 characters, with at least 2 letters and numbers.\n"
+
+	# Troubleshooting
+	printf "*** ${GREEN}TROUBLESHOOTING${RESET} ***\n"
+	echo -e "\t* Permission denied: Run the script with a user that has sudo privileges.\n\t* Invalid options: Enter options exactly as shows (e.g -f, not f).\n"
 
 }
 
