@@ -56,20 +56,20 @@ function findHelper() {
 		case "$userFindOpt" in
 		-n)
 		read -p "Name of file/dir: " userOptName
-		find $userFindPath -name $userOptName 
+		find $userFindPath -name $userOptName 2> /dev/null 
 		;;
 		-f)
 		read -p "Name of file: " userFileName
-		eval "find $userFindPath -type f -name $userFileName" 
+		find $userFindPath -type f -name $userFileName 2> /dev/null
 		;;
 		-d)
 		read -p "Name of dir: " userDirName
-		eval "find $userFindPath -type d -name $userDirName" 
+		find $userFindPath -type d -name $userDirName 2> /dev/null
 		;;
 		-s)
 		echo "[Number][+=larger then, -=smaller then, c=bytes, k=KB, M=MB, G=GB] ex: +1000k"
-		read -p "Size of file/dir: " userFileSize
-		eval "find $userFindPath -size $userFileSize" 
+		read -p "Size of file/dir: " userFileSize 2> /dev/null
+		find $userFindPath -size $userFileSize 2> /dev/null
 		;;
 		*)
 		echo "Invalid option.. Exiting" 
