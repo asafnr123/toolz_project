@@ -11,7 +11,7 @@ This all-in-one Bash utility provides helpful features for system administration
 
 - First of all, you will need a running linux operation system
 - Make sure your script is executable (chmod +x toolz.sh)
-- Do **not** run the script in your current shell for best experience. run the script with the following commands: (bash toolz.sh or just ./toolz.sh)
+- Do **not** run the script in your current shell for best experience. run the script with the following commands: ("bash toolz.sh" or just "./toolz.sh")
 
 ---
 
